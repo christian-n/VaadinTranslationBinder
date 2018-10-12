@@ -1,5 +1,8 @@
 package de.nelius.i18n;
 
+import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinSession;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -60,6 +63,7 @@ public abstract class UiBinder {
 
     protected static void addProvider(UiProvider provider) {
         uiProviders.add(provider);
+        provider.value(Session.get());
     }
 
     protected static boolean containsProvider(UiProvider provider) {

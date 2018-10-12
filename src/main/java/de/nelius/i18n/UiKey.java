@@ -2,43 +2,39 @@ package de.nelius.i18n;
 
 import java.util.function.Consumer;
 
-public class UiKey<T>
-{
+public class UiKey<T> {
 
-   private String id;
-   private Consumer<T> consumer;
-   private Class<T> target;
+    private String id;
+    private Consumer<T> consumer;
+    private Class<T> target;
+    private UiProvider<T> provider;
 
-   private UiKey(String id, Consumer<T> consumer, Class<T> target)
-   {
-      this.id = id;
-      this.consumer = consumer;
-      this.target = target;
-   }
+    private UiKey(String id, Consumer<T> consumer, Class<T> target, UiProvider<T> provider) {
+        this.id = id;
+        this.consumer = consumer;
+        this.target = target;
+        this.provider = provider;
+        consumer.accept(provider.value(Session.get()));
+    }
 
-   public static <T> UiKey of(String id, Consumer<T> consumer, Class<T> target)
-   {
-      return new UiKey(id, consumer, target);
-   }
+    public static <T> UiKey of(String id, Consumer<T> consumer, Class<T> target, UiProvider<T> provider) {
+        return new UiKey(id, consumer, target, provider);
+    }
 
-   public String getId()
-   {
-      return id;
-   }
+    public String getId() {
+        return id;
+    }
 
-   public Consumer<T> getConsumer()
-   {
-      return consumer;
-   }
+    public Consumer<T> getConsumer() {
+        return consumer;
+    }
 
-   public Class<T> getTarget()
-   {
-      return target;
-   }
+    public Class<T> getTarget() {
+        return target;
+    }
 
-   public boolean supports(Class<?> target)
-   {
-      return this.target.equals(target);
-   }
+    public boolean supports(Class<?> target) {
+        return this.target.equals(target);
+    }
 
 }

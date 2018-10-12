@@ -28,88 +28,76 @@ public class I18nBinder extends UiBinder {
         add(key, consumer);
     }
 
-    public static void bind(Consumer<String> consumer) {
-//        add(consumer);
+    public static void bind(String key, Consumer<String> consumer, Function<VariableQuery<String>, String> variableProvider) {
+        add(DefaultI18nKey.of(key, variableProvider), consumer);
     }
 
-    public static void bind(String key, Consumer<String> consumer, Function<String, String> variableProvider) {
-        add(I18nKey.of(key, variableProvider), consumer);
+    public static <T> void bind(I18nKey<T> key, Consumer<String> consumer) {
+        bind(key, consumer);
     }
 
-    public static Function<Object, String> asFunction(Runnable runnable, Function<Object, String> keySupplier) {
+    public static <T> Function<T, String> asFunction(Runnable runnable, Function<T, String> keySupplier) {
         LocaleListener localeListener = LocaleListener.with(runnable);
-        return s -> translator.get().translate(I18nKey.of(keySupplier.apply(s)), localeListener.getLocale());
+        return s -> translator.get().translate(DefaultI18nKey.of(keySupplier.apply(s)), localeListener.getLocale());
     }
 
-    public static Function<Object, String> asFunction(Runnable runnable, Function<Object, String> keySupplier, Function<String, String> variableProvider) {
+    public static <T> Function<T, String> asFunction(Runnable runnable, Function<T, String> keySupplier, Function<VariableQuery<T>, String> variableProvider) {
         LocaleListener localeListener = LocaleListener.with(runnable);
-        return s -> translator.get().translate(I18nKey.of(keySupplier.apply(s), variableProvider), localeListener.getLocale());
+        return s -> translator.get().translate(DefaultI18nKey.of(keySupplier.apply(s), new TargetedQuery<>(s, variableProvider)::apply), localeListener.getLocale());
     }
 
     public static Function<String, String> asStringFunction(Runnable runnable) {
         LocaleListener localeListener = LocaleListener.with(runnable);
-        return s -> translator.get().translate(I18nKey.of(s), localeListener.getLocale());
+        return s -> translator.get().translate(DefaultI18nKey.of(s), localeListener.getLocale());
     }
 
-    public static Function<String, String> asStringFunction(Runnable runnable, Function<String, String> variableProvider) {
+    public static Function<String, String> asStringFunction(Runnable runnable, Function<VariableQuery<String>, String> variableProvider) {
         LocaleListener localeListener = LocaleListener.with(runnable);
-        return s -> translator.get().translate(I18nKey.of(s, variableProvider), localeListener.getLocale());
+        return s -> translator.get().translate(DefaultI18nKey.of(s, new TargetedQuery<>(s, variableProvider)::apply), localeListener.getLocale());
     }
 
 
-    public static Function<Enum<?>, String> asEnumFunction(Runnable runnable) {
+    public static <T> Function<I18nKey<T>, String> asKeyFunction(Runnable runnable) {
         LocaleListener localeListener = LocaleListener.with(runnable);
-        return s -> translator.get().translate(I18nKey.of(toKey(s)), localeListener.getLocale());
+        return s -> translator.get().translate(s, localeListener.getLocale());
     }
 
-    public static Function<Enum<?>, String> asEnumFunction(Runnable runnable, Function<String, String> variableProvider) {
-        LocaleListener localeListener = LocaleListener.with(runnable);
-        return s -> translator.get().translate(I18nKey.of(toKey(s), variableProvider), localeListener.getLocale());
-    }
-
-    public static void bind(Enum<?> key, Consumer<String> consumer) {
-        bind(toKey(key), consumer);
-    }
-
-    public static void bind(Enum<?> key, Consumer<String> consumer, Function<String, String> variableProvider) {
-        add(I18nKey.of(toKey(key), variableProvider), consumer);
-    }
+//    public static <T> Function<I18nKey<T>, String> asKeyFunction(Runnable runnable, Function<VariableQuery<I18nKey<T>>, String> variableProvider) {
+//        LocaleListener localeListener = LocaleListener.with(runnable);
+//        return s -> translator.get().translate(DefaultI18nKey.of(s, new TargetedQuery<>(s, variableProvider)::apply), localeListener.getLocale());
+//    }
 
     private static void addListener(LocaleListener localeListener, Runnable runnable) {
         add(UiKey.of(UI.getCurrent().getId(), locale -> {
             localeListener.setLocale(locale);
             runnable.run();
-        }, Locale.class));
+        }, Locale.class, uiProvider));
     }
-
-//    private static String supplier(I18nKey key) {
-//        I18nObject object = new I18nObject();
-//        add(key, c -> object.setValue(c));
-//        return object.getValue();
-//    }
-//
-//    private static String supplier(I18nKey key, Consumer<String> consumer) {
-//        I18nObject object = new I18nObject();
-//        add(key, c -> {
-//            object.setValue(c);
-//            consumer.accept(c);
-//        });
-//        return object.getValue();
-//    }
 
     private static void add(String key, Consumer<String> consumer) {
-        add(I18nKey.of(key), consumer);
+        add(DefaultI18nKey.of(key), consumer);
     }
 
-    private static void add(I18nKey key, Consumer<String> consumer) {
+    private static void add(DefaultI18nKey key, Consumer<String> consumer) {
         if (!containsProvider(uiProvider)) {
             addProvider(uiProvider);
         }
-        add(UiKey.of(UI.getCurrent().getId(), locale -> consumer.accept(translator.get().translate(key, locale)), Locale.class));
+        add(UiKey.of(UI.getCurrent().getId(), locale -> consumer.accept(translator.get().translate(key, locale)), Locale.class, uiProvider));
     }
 
-    private static String toKey(Enum<?> key) {
-        return key.getClass().getSimpleName().toLowerCase() + "." + key.name().replace("_", ".").toLowerCase();
+    private final static class TargetedQuery<T> {
+
+        private T target;
+        private Function<VariableQuery<T>, String> variableProvider;
+
+        public TargetedQuery(T target, Function<VariableQuery<T>, String> variableProvider) {
+            this.target = target;
+            this.variableProvider = variableProvider;
+        }
+
+        public String apply(VariableQuery<T> variableQuery) {
+            return variableProvider.apply(variableQuery.with(target));
+        }
     }
 
     private final static class LocaleListener {
@@ -135,24 +123,4 @@ public class I18nBinder extends UiBinder {
         }
     }
 
-//    private static class I18nObject {
-//
-//        private String value;
-//
-//        public void setValue(String value) {
-//            this.value = value;
-//            notify();
-//        }
-//
-//        public String getValue() {
-//            try {
-//                wait();
-//                return value;
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            return "null";
-//        }
-//
-//    }
 }

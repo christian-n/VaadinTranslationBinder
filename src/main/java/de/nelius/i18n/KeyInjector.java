@@ -46,12 +46,12 @@ public class KeyInjector {
         return buffer.toString();
     }
 
-    private I18nKey key(Matcher matcher) {
+    private DefaultI18nKey key(Matcher matcher) {
         //NOT GROUP
         if (matcher.group(3) != null) {
-            return I18nKey.of(matcher.group(3), matcher.group(1));
+            return DefaultI18nKey.of(matcher.group(3), matcher.group(1));
         }
-        return I18nKey.of(matcher.group(1));
+        return DefaultI18nKey.of(matcher.group(1));
     }
 
 }

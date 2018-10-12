@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.vaadin.server.*;
 import com.vaadin.spring.server.SpringVaadinServlet;
 import com.vaadin.spring.server.SpringVaadinServletService;
+import com.vaadin.ui.UI;
 import org.springframework.stereotype.Component;
 
 @Component("vaadinServlet")
@@ -17,6 +18,12 @@ public class Vaadin8Trigger extends SpringVaadinServlet implements SessionInitLi
 
     @Override
     public void sessionInit(SessionInitEvent event) throws ServiceException {
+        event.getSession().addRequestHandler(new RequestHandler() {
+            @Override
+            public boolean handleRequest(VaadinSession session, VaadinRequest request, VaadinResponse response) throws IOException {
+                return false;
+            }
+        });
         UiBinder.trigger(Session.of(event.getSession().getSession().getId()));
     }
 

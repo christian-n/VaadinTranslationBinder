@@ -44,10 +44,11 @@ public class SimpleSpringApplication {
              * Init components
              */
             Button button = new Button("#");
-            TextField textField = new TextField("#");
+            TextField textField = new TextField();
             Label label = new Label("#");
-            ComboBox<Enum<?>> comboBox = new ComboBox<>();
-            comboBox.setItems(I18n.COMBOBOX_TEXT, I18n.COMBOBOX_TEXT);
+            ComboBox<Item> comboBox = new ComboBox<>();
+            comboBox.setItems(new Item(I18n.COMBOBOX_TEXT.setProvider(v -> v.is("number") ? String.valueOf(VaadinComponentUtil.indexOf(comboBox, v.getTarget())) : v.getVariable())::apply)), new Item(I18n.COMBOBOX_TEXT))
+            ;
             /**
              * Change Locale programmatically
              */
@@ -72,7 +73,8 @@ public class SimpleSpringApplication {
             I18nBinder.bind(I18n.LABEL_TEXT, label::setValue);
             I18nBinder.bind(I18n.TEXT_FIELD_TEXT, textField::setValue);
             I18nBinder.bind(I18n.BUTTON_TEXT, button::setCaption);
-            comboBox.setItemCaptionGenerator(I18nBinder.asEnumFunction(comboBox.getDataProvider()::refreshAll)::apply);
+            comboBox.setItemCaptionGenerator(I18nBinder.asFunction(comboBox.getDataProvider()::refreshAll, (Function<Item, String>) i -> i.getKey(),
+                    v -> v.is("number") ? String.valueOf(VaadinComponentUtil.indexOf(comboBox, v.getTarget())) : v.getVariable())::apply);
             /**
              * Layout
              */
@@ -83,5 +85,22 @@ public class SimpleSpringApplication {
             return root;
         }
 
+        /**
+         * This is just a object wrapper for {@link I18n} to let {@link VaadinComponentUtil#indexOf(ComboBox, Object)} work properly.
+         */
+        private static class Item {
+
+            private I18n key;
+
+            public Item(I18n key) {
+                this.key = key;
+            }
+
+            public I18n getKey() {
+                return key;
+            }
+        }
+
     }
+
 }

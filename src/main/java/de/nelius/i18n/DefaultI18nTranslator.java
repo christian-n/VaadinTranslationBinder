@@ -26,7 +26,7 @@ public class DefaultI18nTranslator implements I18nTranslator {
     }
 
     @Override
-    public String translate(I18nKey key, Locale locale) {
+    public <T> String translate(I18nKey<T> key, Locale locale) {
         if (key.getVariableProvider() == null) {
             return new KeyInjector(this, locale).inject(rawTranslation(key, locale));
         }
@@ -34,7 +34,7 @@ public class DefaultI18nTranslator implements I18nTranslator {
                 .inject(rawTranslation(key, locale));
     }
 
-    private String rawTranslation(I18nKey key, Locale locale) {
+    private <T> String rawTranslation(I18nKey<T> key, Locale locale) {
         if (StringUtils.isEmpty(key.getBundle())) {
             return getBundle(locale).getBundle(bundle).getString(key.getKey());
         }

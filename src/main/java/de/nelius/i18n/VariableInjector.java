@@ -13,20 +13,17 @@ import java.util.regex.Pattern;
  *
  * @author Christian Nelius
  */
-public class VariableInjector {
+public class VariableInjector<T> {
 
     private static Pattern pattern = Pattern.compile("\\{([a-zA-Z0-9\\-_.]+)}");
 
-    private String key;
-    private Function<String, String> variable;
+    private Function<VariableQuery<T>, String> variable;
 
-    public VariableInjector(String key, Function<String, String> variable) {
-        this.key = key;
+    public VariableInjector(Function<VariableQuery<T>, String> variable) {
         this.variable = variable;
     }
 
-    public VariableInjector(String key, String pattern, Function<String, String> variable) {
-        this.key = key;
+    public VariableInjector(String pattern, Function<VariableQuery<T>, String> variable) {
         this.variable = variable;
         this.pattern = Pattern.compile(pattern);
     }
@@ -35,7 +32,7 @@ public class VariableInjector {
         Matcher matcher = pattern.matcher(text);
         StringBuffer buffer = new StringBuffer();
         while (matcher.find()) {
-            matcher.appendReplacement(buffer, variable.apply(matcher.group(1)));
+            matcher.appendReplacement(buffer, variable.apply(VariableQuery.of(text, matcher.group(1))));
         }
         matcher.appendTail(buffer);
         return buffer.toString();
