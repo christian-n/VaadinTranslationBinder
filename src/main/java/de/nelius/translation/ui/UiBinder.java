@@ -1,7 +1,6 @@
-package de.nelius.i18n;
+package de.nelius.translation.ui;
 
-import com.vaadin.server.VaadinService;
-import com.vaadin.server.VaadinSession;
+import de.nelius.translation.session.Session;
 
 import java.util.HashMap;
 import java.util.HashSet;

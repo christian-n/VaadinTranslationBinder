@@ -1,4 +1,6 @@
-package de.nelius.i18n;
+package de.nelius.translation.i18n.key;
+
+import de.nelius.translation.i18n.variable.VariableQuery;
 
 import java.util.function.Function;
 

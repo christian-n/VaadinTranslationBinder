@@ -1,4 +1,7 @@
-package de.nelius.i18n;
+package de.nelius.translation.i18n.key;
+
+import de.nelius.translation.i18n.translator.I18nTranslator;
+import de.nelius.translation.i18n.variable.VariableInjector;
 
 import java.util.Locale;
 import java.util.regex.Matcher;

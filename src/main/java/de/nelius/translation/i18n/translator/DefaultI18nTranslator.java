@@ -1,4 +1,4 @@
-package de.nelius.i18n;
+package de.nelius.translation.i18n.translator;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -9,16 +9,22 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import de.nelius.translation.i18n.key.I18nKey;
+import de.nelius.translation.i18n.key.KeyInjector;
+import de.nelius.translation.i18n.variable.VariableInjector;
+import de.nelius.translation.session.Session;
+import de.nelius.translation.ui.UiBinder;
 import org.springframework.util.StringUtils;
 
 /**
- * Default {@link I18nTranslator} for key injection by {@link KeyInjector} and variable injection by {@link VariableInjector}
+ * Default {@link I18nTranslator} for key injection by {@link KeyInjector} and variable injection
+ * by {@link VariableInjector} using {@link ResourceBundle} as i18n provider.
  *
  * @author Christian Nelius
  */
 public class DefaultI18nTranslator implements I18nTranslator {
 
-    private static Cache<Session, ResourceBundles> bundleCache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
+    private static Cache<Session, ResourceBugitndles> bundleCache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
     private static final String bundle = "i18n";
 
     public DefaultI18nTranslator() {
@@ -30,7 +36,7 @@ public class DefaultI18nTranslator implements I18nTranslator {
         if (key.getVariableProvider() == null) {
             return new KeyInjector(this, locale).inject(rawTranslation(key, locale));
         }
-        return new KeyInjector(new VariableInjector(key.getKey(), key.getVariableProvider()), this, locale)
+        return new KeyInjector(new VariableInjector(key.getVariablePattern(), key.getVariableProvider(), locale), this, locale)
                 .inject(rawTranslation(key, locale));
     }
 

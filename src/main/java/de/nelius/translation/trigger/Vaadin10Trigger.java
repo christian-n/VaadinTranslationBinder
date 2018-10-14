@@ -1,6 +1,4 @@
-package de.nelius.i18n;
-
-import java.util.Locale;
+package de.nelius.translation.trigger;
 
 public class Vaadin10Trigger //LocaleChangeObserver
 {

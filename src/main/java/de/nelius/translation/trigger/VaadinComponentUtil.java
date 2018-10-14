@@ -1,9 +1,8 @@
-package de.nelius.i18n;
+package de.nelius.translation.trigger;
 
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.ui.ComboBox;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 /**

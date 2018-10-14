@@ -1,4 +1,4 @@
-package de.nelius.i18n;
+package de.nelius.translation.beans;
 
 import javafx.beans.property.SimpleObjectProperty;
 
@@ -8,9 +8,15 @@ import javafx.beans.property.SimpleObjectProperty;
 public class BeanProperty<T> extends SimpleObjectProperty<T> {
 
     private Class<T> type;
+    private boolean required;
 
     public BeanProperty(Class<T> type) {
         this.type = type;
+    }
+
+    public BeanProperty(Class<T> type, boolean required) {
+        this.type = type;
+        this.required = required;
     }
 
     public BeanProperty(T bean) {
@@ -25,4 +31,15 @@ public class BeanProperty<T> extends SimpleObjectProperty<T> {
         return type;
     }
 
+    public boolean isPresent() {
+        return get() != null;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
 }

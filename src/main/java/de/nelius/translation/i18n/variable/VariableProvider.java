@@ -1,7 +1,7 @@
-package de.nelius.i18n;
+package de.nelius.translation.i18n.variable;
 
 /**
- * Variable provider
+ * Variable provider.
  *
  * @author Christian Nelius
  */

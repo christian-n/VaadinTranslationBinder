@@ -1,4 +1,6 @@
-package de.nelius.i18n;
+package de.nelius.translation.ui;
+
+import de.nelius.translation.session.Session;
 
 import java.util.function.Consumer;
 

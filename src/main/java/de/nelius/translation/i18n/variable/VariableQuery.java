@@ -1,8 +1,10 @@
-package de.nelius.i18n;
+package de.nelius.translation.i18n.variable;
+
+import java.util.Locale;
 
 /**
  * Query container for variable needed for injection with {@link VariableInjector}.
- *
+ * <p>
  * Property
  *
  * @author Christian Nelius
@@ -10,16 +12,19 @@ package de.nelius.i18n;
 public class VariableQuery<T> {
 
     private T target;
+    private Locale locale;
     private String property;
     private String variable;
 
-    private VariableQuery(String property, String variable) {
-        this.property = property;
-        this.variable = variable;
+    private VariableQuery() {
     }
 
-    public static VariableQuery of(String property, String variable) {
-        return new VariableQuery(property, variable);
+    public static VariableQuery of(String property, String variable, Locale locale) {
+        VariableQuery variableQuery = new VariableQuery();
+        variableQuery.locale = locale;
+        variableQuery.property = property;
+        variableQuery.variable = variable;
+        return variableQuery;
     }
 
     public VariableQuery<T> with(T target) {
@@ -29,6 +34,10 @@ public class VariableQuery<T> {
 
     public T getTarget() {
         return target;
+    }
+
+    public Locale getLocale() {
+        return locale;
     }
 
     public String getProperty() {

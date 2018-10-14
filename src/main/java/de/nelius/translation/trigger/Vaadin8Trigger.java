@@ -1,16 +1,13 @@
-package de.nelius.i18n;
+package de.nelius.translation.trigger;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.vaadin.server.*;
 import com.vaadin.spring.server.SpringVaadinServlet;
 import com.vaadin.spring.server.SpringVaadinServletService;
-import com.vaadin.ui.UI;
+import de.nelius.translation.session.Session;
+import de.nelius.translation.ui.UiBinder;
 import org.springframework.stereotype.Component;
 
 @Component("vaadinServlet")

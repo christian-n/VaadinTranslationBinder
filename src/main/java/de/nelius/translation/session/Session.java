@@ -1,8 +1,7 @@
-package de.nelius.i18n;
+package de.nelius.translation.session;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
